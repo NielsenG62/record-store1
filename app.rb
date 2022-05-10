@@ -9,18 +9,21 @@ get('/test') do
   erb(:whatever)
 end
 
-get ('/albums') do
+get('/albums') do
   @albums = Album.all
   erb(:albums)
 end
 
-get ('/albums/new') do
+get('/albums/new') do
   erb(:new_album)
 end
 
 post('/albums') do
   name = params[:album_name]
-  album = Album.new(name, nil)
+  artist = params[:album_artist]
+  year = params[:album_year]
+  genre = params[:album_genre]
+  album = Album.new(name, artist, year, genre, nil)
   album.save()
   @albums = Album.all()
   erb(:albums)
@@ -48,4 +51,9 @@ delete('/albums/:id') do
   @album.delete()
   @albums = Album.all
   erb(:albums)
+end
+
+get('/albums/search') do
+  @album = Album.find(params[:id].to_i())
+  erb(:album)
 end
