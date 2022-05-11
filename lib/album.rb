@@ -1,21 +1,15 @@
 class Album
-  attr_reader :name, :artist, :year, :genre, :id
+  attr_reader :name, :id
   @@albums = {}
   @@total_rows = 0
 
-  def initialize(name, artist, year, genre, id)
+  def initialize(name, id)
     @name = name
-    @artist = artist
-    @year = year
-    @genre = genre
     @id = id || @@total_rows += 1
   end
 
   def ==(album_to_compare)
     self.name() == album_to_compare.name()
-    self.artist() == album_to_compare.artist()
-    self.year() == album_to_compare.year()
-    self.genre() == album_to_compare.genre()
   end
 
   def self.all
@@ -23,7 +17,7 @@ class Album
   end
 
   def save
-    @@albums[self.id] = Album.new(self.name, self.artist, self.year, self.genre, self.id)
+    @@albums[self.id] = Album.new(self.name, self.id)
   end
 
   def self.clear
@@ -37,9 +31,6 @@ class Album
 
   def update(name)
     @name = name
-    @artist = artist
-    @year = year
-    @genre = genre
   end
 
   def delete 
@@ -52,5 +43,9 @@ class Album
         return album[1]
       end
     end
+  end
+
+  def songs
+    Song.find_by_album(self.id)
   end
 end
