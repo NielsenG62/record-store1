@@ -66,15 +66,35 @@ describe('#Album') do
       album2.delete()
       expect(Album.all).to(eq([album]))
     end
+    it("deletes all songs belonging to a deleted album") do
+      album = Album.new({:name => "A Love Supreme", :id => nil})
+      album.save()
+      song = Song.new({:name => "Naima", :album_id => album.id, :id => nil})
+      song.save()
+      album.delete()
+      expect(Song.find(song.id)).to(eq(nil))
+    end
   end
 
-  # describe('.search') do
-  #   it('provides an album with the given name') do
-  #     album = Album.new({:name => 'Giant Steps', :id => nil})
-  #     album.save()
-  #     album2 = Album.new({:name => 'Blue', :id => nil})
-  #     album2.save()
-  #     expect(Album.search('Giant Steps')).to(eq(album))
-  #   end
-  # end
+  describe('.search') do
+    it('provides an album with the given name') do
+      album = Album.new({:name => 'Giant Steps', :id => nil})
+      album.save()
+      album2 = Album.new({:name => 'Blue', :id => nil})
+      album2.save()
+      expect(Album.search('Giant Steps')).to(eq([album]))
+    end
+  end
+
+  describe('.sort') do
+    it('sorts albums by the name') do
+      album = Album.new({:name => 'Giant Steps', :id => nil})
+      album.save()
+      album2 = Album.new({:name => 'Blue', :id => nil})
+      album2.save()
+      album3 = Album.new({:name => 'Camp', :id => nil})
+      album3.save()
+      expect(Album.sort('name')).to(eq([album2, album3, album]))
+    end
+  end
 end

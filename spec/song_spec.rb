@@ -3,7 +3,7 @@ require 'spec_helper'
 describe '#Song' do
 
   before(:each) do
-    @album = Album.new({:name => 'Giant Steps', :id => nil})
+    @album = Album.new({:name => 'Giant Steps', :id => nil, :price => 5})
     @album.save()
   end
 

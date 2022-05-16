@@ -45,17 +45,32 @@ class Album
 
   def delete 
     DB.exec("DELETE FROM albums WHERE id = #{id}")
+    DB.exec("DELETE FROM songs WHERE album_id = #{@id}")
   end
 
   def self.search(name)
-    @@albums.each do |album|
-      if album[1].name == name
-        return album[1]
-      end
+    search_albums = DB.exec("SELECT * FROM albums WHERE name = '#{name}';")
+    albums = []
+    search_albums.each() do |album|
+      name = album.fetch("name")
+      id = album.fetch("id").to_i
+      albums.push(Album.new({:name => name, :id => id}))
     end
+    albums
   end
 
   def songs
     Song.find_by_album(self.id)
+  end
+
+  def self.sort(parameter)
+    returned_albums = DB.exec("SELECT * FROM albums;")
+    albums = []
+    returned_albums.each do |album|
+      name = album.fetch("name")
+      id = album.fetch("id").to_i
+      albums.push(Album.new({:name => name, :id => id}))
+    end
+    albums.sort_by!(&:"#{parameter}")
   end
 end
