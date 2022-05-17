@@ -2,6 +2,7 @@ require('sinatra')
 require('sinatra/reloader')
 require('./lib/album')
 require('./lib/song')
+require('./lib/artist')
 require('pry')
 also_reload('lib/**/*.rb')
 require('pg')
@@ -13,6 +14,16 @@ get('/test') do
   erb(:whatever)
 end
 
+get('/') do
+  redirect to('/index')
+end
+
+get('/index') do
+  @albums = Album.all
+  @artists = Artist.all
+  erb(:index)
+end
+
 get('/albums') do
   @albums = Album.all
   erb(:albums)
@@ -22,12 +33,23 @@ get('/albums/new') do
   erb(:new_album)
 end
 
-post('/albums') do
-  name = params[:album_name]
-  album = Album.new(name, nil)
+get('/artists/new') do
+  erb(:new_artist)
+end
+
+get('/artists/:id') do
+  @artist = Artist.find(params[:id].to_i())
+  erb(:artist)
+end
+
+post('/index') do
+  album_name = params[:album_name]
+  artist_name = params[:artist_name]
+  album = Album.new({:name => album_name, :artist => artist_name :id => nil})
   album.save()
-  @albums = Album.all()
-  erb(:albums)
+  artist = Artist.new({:name => artist_name, :id => nil})
+  artist.save()
+  redirect to('/index')
 end
 
 get('/albums/:id') do
@@ -66,7 +88,7 @@ end
 
 post('/albums/:id/songs') do
   @album = Album.find(params[:id].to_i())
-  song = Song.new(params[:song_name], @album.id, nil)
+  song = Song.new({:name => params[:song_name], :album_id => @album.id, :id => nil})
   song.save()
   erb(:album)
 end

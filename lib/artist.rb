@@ -52,8 +52,8 @@ class Artist
   end
 
   def delete 
-    DB.exec("DELETE FROM artists WHERE id = #{id}")
-    # DB.exec("DELETE FROM songs WHERE artist_id = #{@id}")
+    DB.exec("DELETE FROM albums_artists WHERE artist_id = #{@id}")
+    DB.exec("DELETE FROM artists WHERE id = #{@id}")
   end
 
   def self.search(name)
@@ -85,11 +85,12 @@ class Artist
   def albums
     albums = []
     results = DB.exec("SELECT album_id FROM albums_artists WHERE artist_id = #{@id};")
-    results.each() do |result|
-      album_id = result.fetch('album_id').to_i()
-      album = DB.exec("SELECT * FROM albums WHERE id = #{album_id};")
-      name = album.first().fetch("name")
-      albums.push(Album.new({:name => name, :id => album_id}))
+    albums_id = results.values.join.to_i
+    album_id = DB.exec("SELECT * FROM albums where ID in (#{albums_id});")
+    album_id.each() do |album|
+      name = album.fetch("name")
+      id = album.fetch("id")
+      albums.push(Album.new({:name => name, :id => id}))
     end
     albums
   end
