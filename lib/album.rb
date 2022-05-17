@@ -5,6 +5,11 @@ class Album
   def initialize(attributes)
     @name = attributes.fetch(:name)
     @id = attributes.fetch(:id)
+    if attributes.has_key?(:price)
+      @price = attributes.fetch(:price)
+    else
+      @price = 5
+    end
   end
 
   def ==(album_to_compare)
@@ -23,7 +28,7 @@ class Album
   end
 
   def save
-    result = DB.exec("INSERT INTO albums (name) VALUES ('#{@name}') RETURNING id;")
+    result = DB.exec("INSERT INTO albums (name, price) VALUES ('#{@name}', '#{@price}') RETURNING id;")
     @id = result.first().fetch("id").to_i
   end
 
@@ -69,7 +74,8 @@ class Album
     returned_albums.each do |album|
       name = album.fetch("name")
       id = album.fetch("id").to_i
-      albums.push(Album.new({:name => name, :id => id}))
+      price = album.fetch("price").to_i
+      albums.push(Album.new({:name => name, :id => id, :price => price}))
     end
     albums.sort_by!(&:"#{parameter}")
   end

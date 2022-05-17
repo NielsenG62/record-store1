@@ -96,5 +96,14 @@ describe('#Album') do
       album3.save()
       expect(Album.sort('name')).to(eq([album2, album3, album]))
     end
+    it('sorts albums by the price') do
+      album = Album.new({:name => 'Giant Steps', :id => nil, :price =>2})
+      album.save()
+      album2 = Album.new({:name => 'Blue', :id => nil, :price =>3})
+      album2.save()
+      album3 = Album.new({:name => 'Camp', :id => nil, :price =>1})
+      album3.save()
+      expect(Album.sort('price')).to(eq([album3, album, album2]))
+    end
   end
 end
